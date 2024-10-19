@@ -9,6 +9,8 @@ import {
 import LoginPage from "./pages/Login";
 import RegisterPage from "./pages/Register";
 import DashboardPage from "./pages/Dashboard";
+import NewSpaceMarinePage from "./pages/NewSpaceMarine";
+import SpaceMarinoInfo from "./pages/SpaceMarineInfo";
 
 const isAuthenticated = () => {
   return localStorage.getItem("token") !== null;
@@ -31,6 +33,14 @@ function App() {
         <Route
           path="/dashboard"
           element={<PrivateRoute>{<DashboardPage />}</PrivateRoute>}
+        />
+        <Route
+          path="/marines/:id"
+          element={<PrivateRoute>{<SpaceMarinoInfo />}</PrivateRoute>}
+        />
+        <Route
+          path="/marines/new"
+          element={<PrivateRoute>{<NewSpaceMarinePage />}</PrivateRoute>}
         />
       </Routes>
     </Router>

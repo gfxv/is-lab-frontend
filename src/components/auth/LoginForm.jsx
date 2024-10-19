@@ -24,6 +24,7 @@ const LoginForm = () => {
       });
       const { token } = response.data;
       localStorage.setItem("token", token);
+      localStorage.setItem("username", username)
 
       // Optionally, redirect or perform another action
       console.log("Login successful:", token);

@@ -13,8 +13,8 @@ const Header = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const username = "asdasdsd";
-  const isAdmin = true;
+  const username = localStorage.getItem("username"); // костыль?
+  const isAdmin = true; // TODO: add isAdmin endpoint to AuthController
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);

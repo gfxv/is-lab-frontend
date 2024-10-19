@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,6 +13,7 @@ import {
 const Header = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   const username = localStorage.getItem("username"); // костыль?
   const isAdmin = true; // TODO: add isAdmin endpoint to AuthController
@@ -24,6 +26,12 @@ const Header = () => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
       setDropdownOpen(false);
     }
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    navigate("/login");
   };
 
   useEffect(() => {
@@ -74,13 +82,20 @@ const Header = () => {
               </Link>
             )}
 
-            <Link
+            {/* <Link
               to="/logout"
               className="flex items-center px-4 py-2 rounded-md hover:bg-gray-200"
             >
+
+            </Link> */}
+
+            <div
+              onClick={logout}
+              className="flex items-center px-4 py-2 rounded-md hover:bg-gray-200 hover:cursor-pointer"
+            >
               <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
               Logout
-            </Link>
+            </div>
           </div>
         )}
       </div>

@@ -1,12 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const ChapterTable = ({ data, onRowClick }) => {
-  const [selectedChapter, setSelectedChapter] = useState({})
+import { getBaseUrl } from "../../global";
+import axios from "axios";
+
+const ChapterTable = ({ onRowClick }) => {
+  const [data, setData] = useState([])
 
   const handleSelection = (item) => {
     onRowClick(item);
-    setSelectedChapter(item)
   };
+
+  useEffect(() => {
+    axios
+      .get(getBaseUrl() + "/chapters")
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
 
   return (
     <div className="max-h-45 overflow-y-auto border border-gray-300">
@@ -34,7 +47,7 @@ const ChapterTable = ({ data, onRowClick }) => {
           {data.map((item) => (
             <tr
               key={item.id}
-              className={`hover:bg-gray-100 cursor-pointer transition-colors duration-200 ${selectedChapter.id === item.id ? 'bg-gray-200' : ''}`}
+              className={`hover:bg-gray-100 cursor-pointer transition-colors duration-200`}
               onClick={() => handleSelection(item)}
             >
               <td className="px-2 py-1 text-sm text-gray-600">{item.id}</td>

@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { getBaseUrl } from "../../global";
+import { Link } from "react-router-dom";
+
+
 import NewCoordinatesModal from "./NewCoordinatesModal";
 import NewChapterModal from "./NewChapterModal";
 import CoordinatesTable from "./CoordinatesTable";
 import ChapterTable from "./ChapterTable";
 
-import axios from "axios";
-import { getBaseUrl } from "../../global";
+const SpaceMarineCard = ({ id }) => {
 
-const SpaceMarineForm = () => {
   const [availableWeapons, setAvailableWeapons] = useState([]);
   const [availableMeleeWeapons, setAvailableMeleeWeapons] = useState([]);
+  const [availableCoordinates, setAvailableCoordinates] = useState([]);
+  const [availableChapters, setAvailableCapters] = useState([]);
 
   const [name, setName] = useState("");
   const [health, setHealth] = useState(100);
@@ -27,72 +30,10 @@ const SpaceMarineForm = () => {
 
   const [isCoordinatesModalOpen, setIsCoordinatesModalOpen] = useState(false);
   const [isChaptersModalOpen, setIsChapterModalOpen] = useState(false);
-  const [isCoordinateSelected, setIsCoordinateSelected] = useState(false);
-  const [isChapterSelected, setIsChapterSelected] = useState(false);
 
-  const navigate = useNavigate();
+  useEffect(() => {}, []);
 
-  const token = localStorage.getItem("token");
-  const config = {
-    headers: {
-      Authorization: "Bearer " + token,
-      "Content-Type": "application/json",
-    },
-  };
-
-  const onCoordinateSelection = (newCoordinate) => {
-    setCoordinates(newCoordinate);
-    setIsCoordinateSelected(true);
-  };
-
-  const onChapterSelection = (newChapter) => {
-    setChapter(newChapter);
-    setIsChapterSelected(true);
-  };
-
-  useEffect(() => {
-    axios
-      .get(getBaseUrl() + "/marines/weapons")
-      .then((response) => {
-        setAvailableWeapons(response.data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-
-    axios
-      .get(getBaseUrl() + "/marines/melee-weapons")
-      .then((response) => {
-        setAvailableMeleeWeapons(response.data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  }, []);
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    const newSpaceMarine = {
-      name,
-      creationDate: "", // NOTE: generate creationDate on server side
-      health,
-      height,
-      weapon,
-      meleeWeapon,
-      coordinates,
-      chapter,
-    };
-
-    axios
-      .post(getBaseUrl() + "/marines/new", newSpaceMarine, config)
-      .then((response) => {
-        console.log(`[${response.status}] ${response.data}`);
-        navigate("/");
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
+  const handleFormSubmit = (e) => {}
 
   return (
     <div class="w-full max-w-lg m-auto mt-5">
@@ -193,22 +134,11 @@ const SpaceMarineForm = () => {
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Coordinates:
           </label>
-          {isCoordinateSelected && (
-            <div>
-              <label class="block text-gray-700 text-sm font-mono">
-                Selected Coordinate:
-              </label>
-              <label class="block text-gray-700 text-sm font-mono">
-                x: {coordinates.x} 
-              </label>
-              <label class="block text-gray-700 text-sm font-mono mb-2">
-                y: {coordinates.y} 
-              </label>
-            </div>
-          )}
           <label class="block text-gray-500 text-sm">Select from table</label>
-          {/* <CoordinatesTable onRowClick={setCoordinates} /> */}
-          <CoordinatesTable onRowClick={onCoordinateSelection} />
+          <CoordinatesTable
+            data={availableCoordinates}
+            onRowClick={setCoordinates}
+          />
           <label class="block text-gray-500 text-sm mt-2">
             Or create a new one
           </label>
@@ -220,32 +150,12 @@ const SpaceMarineForm = () => {
             New coordinate
           </button>
         </div>
-
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Chapter:
           </label>
-          { isChapterSelected && (
-            <div>
-              <label class="block text-gray-700 text-sm font-mono">
-                Selected Chapter:
-              </label>
-              <label class="block text-gray-700 text-sm font-mono">
-                name: {chapter.name} 
-              </label>
-              <label class="block text-gray-700 text-sm font-mono">
-                parent legion: {chapter.parentLegion} 
-              </label>
-              <label class="block text-gray-700 text-sm font-mono">
-                marines count: {chapter.marinesCount} 
-              </label>
-              <label class="block text-gray-700 text-sm font-mono mb-2">
-                world: {chapter.world} 
-              </label>
-            </div>
-          )}
           <label class="block text-gray-500 text-sm">Select from table</label>
-          <ChapterTable onRowClick={onChapterSelection} />
+          <ChapterTable data={availableChapters} onRowClick={setChapter} />
 
           <label class="block text-gray-500 text-sm mt-2">
             Or create a new one
@@ -265,7 +175,7 @@ const SpaceMarineForm = () => {
             class="rounded-md bg-green-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-green-700 focus:shadow-none active:bg-green-700 hover:bg-green-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
             type="submit"
           >
-            Create new space marine
+            Save changes
           </button>
         </div>
       </div>
@@ -273,16 +183,16 @@ const SpaceMarineForm = () => {
       <NewCoordinatesModal
         isOpen={isCoordinatesModalOpen}
         onClose={() => setIsCoordinatesModalOpen(false)}
-        onSave={(newCoordinates) => onCoordinateSelection(newCoordinates)}
+        onSave={(newCoordinates) => setCoordinates(newCoordinates)}
       />
 
       <NewChapterModal
         isOpen={isChaptersModalOpen}
         onClose={() => setIsChapterModalOpen(false)}
-        onSave={(newChapter) => onChapterSelection(newChapter)}
+        onSave={(newChapter) => setChapter(newChapter)}
       />
     </div>
   );
 };
 
-export default SpaceMarineForm;
+export default SpaceMarineCard;

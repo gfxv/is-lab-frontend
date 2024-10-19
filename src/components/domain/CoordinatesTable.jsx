@@ -1,14 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const CoordinatesTable = ({ data, onRowClick }) => {
-  const [selectedX, setSelectedX] = useState(-1)
-  const [selectedY, setSelectedY] = useState(-1)
+import { getBaseUrl } from "../../global";
+import axios from "axios";
+
+const CoordinatesTable = ({ onRowClick }) => {
+  const [data, setData] = useState([])
 
   const handleSelection = (item) => {
     onRowClick(item)
-    setSelectedX(item.x)
-    setSelectedY(item.y)
   }
+
+  useEffect(() => {
+    axios
+      .get(getBaseUrl() + "/coordinates")
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
 
   return (
     <div className="max-h-45 overflow-y-auto border border-gray-300">
@@ -30,7 +41,7 @@ const CoordinatesTable = ({ data, onRowClick }) => {
           {data.map((item) => (
             <tr
               key={item.id}
-              className={`hover:bg-gray-200 cursor-pointer transition-colors duration-200 ${selectedX === item.x && selectedY === item.y ? 'bg-gray-200' : ''}`}
+              className={`hover:bg-gray-200 cursor-pointer transition-colors duration-200`}
               onClick={() => handleSelection(item)}
             >
               <td className="px-4 py-1 text-sm text-gray-600">{item.id}</td>

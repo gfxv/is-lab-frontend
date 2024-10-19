@@ -1,5 +1,6 @@
 // SpaceMarineForm.js
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import NewCoordinatesModal from "./NewCoordinatesModal";
 import NewChapterModal from "./NewChapterModal";
 import CoordinatesTable from "./CoordinatesTable";
@@ -16,6 +17,7 @@ const SpaceMarineForm = () => {
 
   const [name, setName] = useState("");
   const [health, setHealth] = useState(100);
+  const [height, setHeight] = useState(100);
   const [weapon, setWeapon] = useState("");
   const [meleeWeapon, setMeleeWeapon] = useState("");
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
@@ -23,11 +25,21 @@ const SpaceMarineForm = () => {
     name: "",
     parentLegion: "",
     marinesCount: 1,
-    world: ""
+    world: "",
   });
 
   const [isCoordinatesModalOpen, setIsCoordinatesModalOpen] = useState(false);
   const [isChaptersModalOpen, setIsChapterModalOpen] = useState(false);
+
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+  const config = {
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+    },
+  };
 
   useEffect(() => {
     axios
@@ -55,6 +67,7 @@ const SpaceMarineForm = () => {
       name,
       creationDate: "", // NOTE: generate creationDate on server side
       health,
+      height,
       weapon,
       meleeWeapon,
       coordinates,
@@ -62,10 +75,13 @@ const SpaceMarineForm = () => {
     };
 
     console.log("New Space Marine:", newSpaceMarine);
+    console.log(config);
+
     axios
-      .post(getBaseUrl() + "/marines/new", newSpaceMarine)
+      .post(getBaseUrl() + "/marines/new", newSpaceMarine, config)
       .then((response) => {
         console.log(`[${response.status}] ${response.data}`);
+        navigate("/");
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -73,7 +89,7 @@ const SpaceMarineForm = () => {
   };
 
   return (
-    <div class="w-full max-w-lg m-auto">
+    <div class="w-full max-w-lg m-auto mt-5">
       <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div class="mb-4">
           <label
@@ -105,6 +121,23 @@ const SpaceMarineForm = () => {
             type="number"
             value={health}
             onChange={(e) => setHealth(e.target.value)}
+            min="0"
+            required
+          />
+        </div>
+
+        <div class="mb-4">
+          <label
+            class="block text-gray-700 text-sm font-bold mb-2"
+            for="username"
+          >
+            Height:
+          </label>
+          <input
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            type="number"
+            value={height}
+            onChange={(e) => setHeight(e.target.value)}
             min="0"
             required
           />
@@ -154,11 +187,11 @@ const SpaceMarineForm = () => {
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Coordinates:
           </label>
-            <label class="block text-gray-500 text-sm">Select from table</label>
-            <CoordinatesTable
-              data={availableCoordinates}
-              onRowClick={setCoordinates}
-            />
+          <label class="block text-gray-500 text-sm">Select from table</label>
+          <CoordinatesTable
+            data={availableCoordinates}
+            onRowClick={setCoordinates}
+          />
           <label class="block text-gray-500 text-sm mt-2">
             Or create a new one
           </label>

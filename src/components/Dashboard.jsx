@@ -2,14 +2,16 @@ import React, { useState, useEffect, useRef } from "react";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
 import { getBaseUrl, getWsBaseUrl } from "../global";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import axios from "axios";
 
 const Dashboard = () => {
   const [data, setData] = useState([]);
-  const wsUrl = getWsBaseUrl();
+  const navigate = useNavigate();
+
   const stompClientRef = useRef(null);
+  const wsUrl = getWsBaseUrl();
 
   const getRecords = () => {
     axios
@@ -25,6 +27,10 @@ const Dashboard = () => {
       .catch((error) => {
         console.error("Error:", error);
       });
+  };
+
+  const handleRowClick = (id) => {
+    navigate(`/marines/${id}`);
   };
 
   useEffect(() => {
@@ -110,7 +116,10 @@ const Dashboard = () => {
         </thead>
         <tbody>
           {data.map((item) => (
-            <tr key={item.id} className="hover:bg-gray-50 hover:cursor-pointer">
+            <tr key={item.id} 
+            className="hover:bg-gray-50 hover:cursor-pointer"
+            onClick={() => handleRowClick(item.id)}
+            >
               <td className={tdStyles}>{item.id}</td>
               <td className={tdStyles}>{item.name}</td>
               <td className={tdStyles}>{item.creationDate}</td>

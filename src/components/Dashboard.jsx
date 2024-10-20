@@ -3,22 +3,34 @@ import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
 import { getBaseUrl, getWsBaseUrl } from "../global";
 import { Link, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 import axios from "axios";
 
 const Dashboard = () => {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
-
   const stompClientRef = useRef(null);
   const wsUrl = getWsBaseUrl();
 
-  const getRecords = () => {
+  const pageMinValue = 0;
+  const [pageMaxValue, setPageMaxValue] = useState(0); // ???
+  const pageSize = 10;
+  const [currentPage, setCurrentPage] = useState(pageMinValue);
+  const [isFirst, setIsFirst] = useState(true);
+  const [isLast, setIsLast] = useState(false);
+
+  const getRecords = (page) => {
+    console.log("triggered get records: " + currentPage);
+    console.log("min: " + pageMinValue);
+    console.log("max: " + pageMaxValue);
+
     axios
       .get(getBaseUrl() + "/marines", {
         params: {
-          page: 0,
-          size: 5,
+          page: page,
+          size: pageSize,
         },
       })
       .then((response) => {
@@ -29,22 +41,61 @@ const Dashboard = () => {
       });
   };
 
+  const getPagesCount = () => {
+    axios
+      .get(getBaseUrl() + "/marines/count")
+      .then((response) => {
+        setPageMaxValue(Math.ceil(response.data / pageSize) - 1);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
   const handleRowClick = (id) => {
     navigate(`/marines/${id}`);
   };
 
+  const handleNextPage = () => {
+    const newPage = currentPage + 1;
+    if (newPage !== pageMinValue) {
+      setIsFirst(false);
+    }
+    if (newPage === pageMaxValue) {
+      setIsLast(true);
+    }
+    if (newPage > pageMaxValue) {
+      return;
+    }
+    getRecords(newPage);
+    setCurrentPage((prev) => prev + 1);
+  };
+
+  const handlePrevPage = () => {
+    const newPage = currentPage - 1;
+    if (newPage !== pageMaxValue) {
+      setIsLast(false);
+    }
+    if (newPage === pageMinValue) {
+      setIsFirst(true);
+    }
+    if (newPage < pageMinValue) {
+      return;
+    }
+    getRecords(newPage);
+    setCurrentPage((prev) => prev - 1);
+  };
+
   useEffect(() => {
     stompClientRef.current = Stomp.over(() => new SockJS(wsUrl));
-
     stompClientRef.current.connect({}, (frame) => {
       console.log("Connected to WebSocket: " + frame);
       stompClientRef.current.subscribe("/records/changes", (message) => {
-        console.log("[ws.subscribe]", message.body);
         updateTable(JSON.parse(message.body));
       });
 
       console.log("calling getRecords()");
-      getRecords();
+      getRecords(pageMinValue);
     });
 
     stompClientRef.current.debug = (str) => {
@@ -52,6 +103,7 @@ const Dashboard = () => {
     };
 
     stompClientRef.current.activate();
+    getPagesCount();
     return () => {
       if (stompClientRef.current) {
         stompClientRef.current.disconnect(() => {
@@ -116,9 +168,10 @@ const Dashboard = () => {
         </thead>
         <tbody>
           {data.map((item) => (
-            <tr key={item.id} 
-            className="hover:bg-gray-50 hover:cursor-pointer"
-            onClick={() => handleRowClick(item.id)}
+            <tr
+              key={item.id}
+              className="hover:bg-gray-50 hover:cursor-pointer"
+              onClick={() => handleRowClick(item.id)}
             >
               <td className={tdStyles}>{item.id}</td>
               <td className={tdStyles}>{item.name}</td>
@@ -135,6 +188,29 @@ const Dashboard = () => {
           ))}
         </tbody>
       </table>
+      <div className="flex justify-end mt-3">
+        <button
+          onClick={handlePrevPage}
+          disabled={isFirst}
+          className={`px-2 border rounded border-gray-400 mr-2 ${
+            isFirst ? "bg-gray-200 cursor-not-allowed" : ""
+          }`}
+        >
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </button>
+        <span>
+          {currentPage + 1}/{pageMaxValue + 1}
+        </span>
+        <button
+          onClick={handleNextPage}
+          disabled={isLast}
+          className={`px-2 border border-gray-400 rounded ml-2 ${
+            isLast ? "bg-gray-200 cursor-not-allowed" : ""
+          }`}
+        >
+          <FontAwesomeIcon icon={faArrowRight} />
+        </button>
+      </div>
     </div>
   );
 };

@@ -4,10 +4,14 @@ import axios from "axios";
 import { getBaseUrl } from "../../global";
 import { useNavigate, Link } from "react-router-dom";
 
+import { useGlobalState } from '../../providers/GlobalStateContext';
+
 const LoginForm = () => {
   const [error, setError] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const { login } = useGlobalState();
 
   const navigate = useNavigate();
 
@@ -23,14 +27,11 @@ const LoginForm = () => {
         password,
       });
       const { token } = response.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("username", username)
+      login(username, token);
 
-      // Optionally, redirect or perform another action
       console.log("Login successful:", token);
       navigate("/dashboard")
     } catch (err) {
-      // Handle error
       setError("Login failed. Please check your username and password.");
       console.error("Error:", err.message);
     }

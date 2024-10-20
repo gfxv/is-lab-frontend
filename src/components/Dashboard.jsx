@@ -159,6 +159,7 @@ const Dashboard = () => {
             <th className={thStyles}>Name</th>
             <th className={thStyles}>Creation Date</th>
             <th className={thStyles}>Health</th>
+            <th className={thStyles}>Height</th>
             <th className={thStyles}>Weapon</th>
             <th className={thStyles}>Melee Weapon</th>
             <th className={thStyles}>Coordinate</th>
@@ -177,6 +178,7 @@ const Dashboard = () => {
               <td className={tdStyles}>{item.name}</td>
               <td className={tdStyles}>{item.creationDate}</td>
               <td className={tdStyles}>{item.health}</td>
+              <td className={tdStyles}>{item.height}</td>
               <td className={tdStyles}>{item.weapon}</td>
               <td className={tdStyles}>{item.meleeWeapon}</td>
               <td className={tdStyles}>

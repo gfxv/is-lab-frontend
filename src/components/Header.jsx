@@ -10,13 +10,18 @@ import {
   faTableList,
 } from "@fortawesome/free-solid-svg-icons";
 
+import { useGlobalState } from "../providers/GlobalStateContext";
+
+import axios from "axios";
+import { getBaseUrl } from "../global";
+
 const Header = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [isAdminRequestSent, setIsAdminRequestSent] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  const username = localStorage.getItem("username"); // костыль?
-  const isAdmin = true; // TODO: add isAdmin endpoint to AuthController
+  const { user, token, isAdmin, checkIsAdmin } = useGlobalState();
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
@@ -28,6 +33,24 @@ const Header = () => {
     }
   };
 
+  const config = {
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+    },
+  };
+  const sendAdminRequest = () => {
+    if (isAdminRequestSent) return;
+    axios
+      .post(getBaseUrl() + "/admin/new", {}, config)
+      .then((response) => {
+        setIsAdminRequestSent(true);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
@@ -35,6 +58,8 @@ const Header = () => {
   };
 
   useEffect(() => {
+    checkIsAdmin();
+
     document.addEventListener("mousedown", closeDropdown);
     return () => {
       document.removeEventListener("mousedown", closeDropdown);
@@ -48,7 +73,7 @@ const Header = () => {
       </div>
       <div className="relative" ref={dropdownRef}>
         <button onClick={toggleDropdown} className="focus:outline-none">
-          {username}
+          {user}
           {isAdmin && <FontAwesomeIcon icon={faCrown} className="ml-2" />}
         </button>
         {isDropdownOpen && (
@@ -63,7 +88,7 @@ const Header = () => {
 
             {isAdmin && (
               <Link
-                to="/admin-requests"
+                to="/admin"
                 className="flex items-center px-4 py-2 rounded-md hover:bg-gray-200"
               >
                 <FontAwesomeIcon icon={faUsers} className="mr-2" />
@@ -73,21 +98,14 @@ const Header = () => {
 
             {/* TODO: later */}
             {!isAdmin && (
-              <Link
-                to="/settings"
-                className="flex items-center px-4 py-2 rounded-md hover:bg-gray-200"
+              <div
+                onClick={sendAdminRequest}
+                className="flex items-center px-4 py-2 rounded-md hover:bg-gray-200 hover:cursor-pointer"
               >
                 <FontAwesomeIcon icon={faAnglesUp} className="mr-2" />
                 Request Admin Role
-              </Link>
+              </div>
             )}
-
-            {/* <Link
-              to="/logout"
-              className="flex items-center px-4 py-2 rounded-md hover:bg-gray-200"
-            >
-
-            </Link> */}
 
             <div
               onClick={logout}

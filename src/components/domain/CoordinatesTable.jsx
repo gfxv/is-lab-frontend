@@ -22,7 +22,7 @@ const CoordinatesTable = ({ onRowClick }) => {
   }, []);
 
   return (
-    <div className="max-h-45 overflow-y-auto border border-gray-300">
+    <div className="max-h-72 overflow-y-auto border border-gray-300">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-300 sticky top-0 z-10">
           <tr>

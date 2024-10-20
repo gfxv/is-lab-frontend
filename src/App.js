@@ -12,6 +12,13 @@ import DashboardPage from "./pages/Dashboard";
 import NewSpaceMarinePage from "./pages/NewSpaceMarine";
 import SpaceMarinoInfo from "./pages/SpaceMarineInfo";
 
+import AdminDashboardPage from "./pages/AdminDashboard";
+
+import {
+  GlobalStateProvider,
+  useGlobalState,
+} from "./providers/GlobalStateContext";
+
 const isAuthenticated = () => {
   return localStorage.getItem("token") !== null;
 };
@@ -22,28 +29,36 @@ const PrivateRoute = ({ children }) => {
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route
-          path="/"
-          element={<PrivateRoute>{<Navigate to="/dashboard" />}</PrivateRoute>}
-        />
-        <Route
-          path="/dashboard"
-          element={<PrivateRoute>{<DashboardPage />}</PrivateRoute>}
-        />
-        <Route
-          path="/marines/:id"
-          element={<PrivateRoute>{<SpaceMarinoInfo />}</PrivateRoute>}
-        />
-        <Route
-          path="/marines/new"
-          element={<PrivateRoute>{<NewSpaceMarinePage />}</PrivateRoute>}
-        />
-      </Routes>
-    </Router>
+    <GlobalStateProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route
+            path="/admin"
+            element={<PrivateRoute>{<AdminDashboardPage />}</PrivateRoute>}
+          />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>{<Navigate to="/dashboard" />}</PrivateRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={<PrivateRoute>{<DashboardPage />}</PrivateRoute>}
+          />
+          <Route
+            path="/marines/:id"
+            element={<PrivateRoute>{<SpaceMarinoInfo />}</PrivateRoute>}
+          />
+          <Route
+            path="/marines/new"
+            element={<PrivateRoute>{<NewSpaceMarinePage />}</PrivateRoute>}
+          />
+        </Routes>
+      </Router>
+    </GlobalStateProvider>
   );
 }
 

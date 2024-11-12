@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import { getBaseUrl } from "../../global";
 import { Link } from "react-router-dom";
 
@@ -9,13 +10,13 @@ import CoordinatesTable from "./CoordinatesTable";
 import ChapterTable from "./ChapterTable";
 
 const SpaceMarineCard = ({ id }) => {
-
   const [availableWeapons, setAvailableWeapons] = useState([]);
   const [availableMeleeWeapons, setAvailableMeleeWeapons] = useState([]);
   const [availableCoordinates, setAvailableCoordinates] = useState([]);
   const [availableChapters, setAvailableCapters] = useState([]);
 
   const [name, setName] = useState("");
+  const [creationDate, setCreationDate] = useState(0);
   const [health, setHealth] = useState(100);
   const [height, setHeight] = useState(100);
   const [weapon, setWeapon] = useState("");
@@ -27,13 +28,78 @@ const SpaceMarineCard = ({ id }) => {
     marinesCount: 1,
     world: "",
   });
+  const [owner, setOwner] = useState("");
 
   const [isCoordinatesModalOpen, setIsCoordinatesModalOpen] = useState(false);
   const [isChaptersModalOpen, setIsChapterModalOpen] = useState(false);
 
-  useEffect(() => {}, []);
+  const [isCoordinateSelected, setIsCoordinateSelected] = useState(false);
+  const [isChapterSelected, setIsChapterSelected] = useState(false);
 
-  const handleFormSubmit = (e) => {}
+  const onCoordinateSelection = (newCoordinate) => {
+    setCoordinates(newCoordinate);
+    setIsCoordinateSelected(true);
+  };
+
+  const onChapterSelection = (newChapter) => {
+    setChapter(newChapter);
+    setIsChapterSelected(true);
+  };
+
+  useEffect(() => {
+    axios
+    .get(getBaseUrl() + `/marines/${id}`)
+    .then((response) => {
+      setData(response.data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+
+    axios
+      .get(getBaseUrl() + "/marines/weapons")
+      .then((response) => {
+        setAvailableWeapons(response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
+    axios
+      .get(getBaseUrl() + "/marines/melee-weapons")
+      .then((response) => {
+        setAvailableMeleeWeapons(response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
+  }, []);
+
+  const setData = (info) => {
+    setName(info.name);
+    setCreationDate(info.creationDate);
+    setHealth(info.health);
+    setHeight(info.height);
+    setWeapon(info.weapon);
+    setMeleeWeapon(info.meleeWeapon);
+    setCoordinates({x: info.coordinates.x, y: info.coordinates.y})
+    setChapter({
+      name: info.chapter.name,
+      parentLegion: info.chapter.parentLegion,
+      marinesCount: info.chapter.marinesCount,
+      world: info.chapter.world,
+    })
+    setOwner(info.setOwner)
+
+    setIsCoordinateSelected(true)
+    setIsChapterSelected(true)
+  }
+
+  const handleFormSubmit = (e) => {
+    // update new values
+    // ? send put request to API ?
+  }
 
   return (
     <div class="w-full max-w-lg m-auto mt-5">
@@ -101,7 +167,6 @@ const SpaceMarineCard = ({ id }) => {
               onChange={(e) => setWeapon(e.target.value)}
               required
             >
-              <option>...</option>
               {availableWeapons.map((w) => (
                 <option key={w} value={w}>
                   {w}
@@ -120,7 +185,6 @@ const SpaceMarineCard = ({ id }) => {
               onChange={(e) => setMeleeWeapon(e.target.value)}
               required
             >
-              <option>...</option>
               {Object.values(availableMeleeWeapons).map((mw) => (
                 <option key={mw} value={mw}>
                   {mw}
@@ -134,10 +198,21 @@ const SpaceMarineCard = ({ id }) => {
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Coordinates:
           </label>
+          {isCoordinateSelected && (
+            <div>
+              <label class="block text-gray-700 text-sm font-mono">
+                Selected Coordinate:
+              </label>
+              <label class="block text-gray-700 text-sm font-mono">
+                x: {coordinates.x} 
+              </label>
+              <label class="block text-gray-700 text-sm font-mono mb-2">
+                y: {coordinates.y} 
+              </label>
+            </div>
+          )}
           <label class="block text-gray-500 text-sm">Select from table</label>
-          <CoordinatesTable
-            data={availableCoordinates}
-            onRowClick={setCoordinates}
+          <CoordinatesTable onRowClick={onCoordinateSelection}
           />
           <label class="block text-gray-500 text-sm mt-2">
             Or create a new one
@@ -154,9 +229,27 @@ const SpaceMarineCard = ({ id }) => {
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Chapter:
           </label>
+          { isChapterSelected && (
+            <div>
+              <label class="block text-gray-700 text-sm font-mono">
+                Selected Chapter:
+              </label>
+              <label class="block text-gray-700 text-sm font-mono">
+                name: {chapter.name} 
+              </label>
+              <label class="block text-gray-700 text-sm font-mono">
+                parent legion: {chapter.parentLegion} 
+              </label>
+              <label class="block text-gray-700 text-sm font-mono">
+                marines count: {chapter.marinesCount} 
+              </label>
+              <label class="block text-gray-700 text-sm font-mono mb-2">
+                world: {chapter.world} 
+              </label>
+            </div>
+          )}
           <label class="block text-gray-500 text-sm">Select from table</label>
-          <ChapterTable data={availableChapters} onRowClick={setChapter} />
-
+          <ChapterTable data={availableChapters} onRowClick={onChapterSelection} />
           <label class="block text-gray-500 text-sm mt-2">
             Or create a new one
           </label>

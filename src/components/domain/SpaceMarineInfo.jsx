@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { getBaseUrl } from "../../global";
 import { Link } from "react-router-dom";
 
@@ -21,8 +22,9 @@ const SpaceMarineCard = ({ id }) => {
   const [height, setHeight] = useState(100);
   const [weapon, setWeapon] = useState("");
   const [meleeWeapon, setMeleeWeapon] = useState("");
-  const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
+  const [coordinates, setCoordinates] = useState({ id: -1, x: 0, y: 0 });
   const [chapter, setChapter] = useState({
+    id: -1,
     name: "",
     parentLegion: "",
     marinesCount: 1,
@@ -35,6 +37,15 @@ const SpaceMarineCard = ({ id }) => {
 
   const [isCoordinateSelected, setIsCoordinateSelected] = useState(false);
   const [isChapterSelected, setIsChapterSelected] = useState(false);
+
+  const token = localStorage.getItem("token");
+  const config = {
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+    },
+  };
+  const navigate = useNavigate();
 
   const onCoordinateSelection = (newCoordinate) => {
     setCoordinates(newCoordinate);
@@ -83,8 +94,9 @@ const SpaceMarineCard = ({ id }) => {
     setHeight(info.height);
     setWeapon(info.weapon);
     setMeleeWeapon(info.meleeWeapon);
-    setCoordinates({x: info.coordinates.x, y: info.coordinates.y})
+    setCoordinates({id: info.coordinates.id, x: info.coordinates.x, y: info.coordinates.y})
     setChapter({
+      id: info.chapter.id,
       name: info.chapter.name,
       parentLegion: info.chapter.parentLegion,
       marinesCount: info.chapter.marinesCount,
@@ -97,8 +109,31 @@ const SpaceMarineCard = ({ id }) => {
   }
 
   const handleFormSubmit = (e) => {
-    // update new values
-    // ? send put request to API ?
+    e.preventDefault();
+
+    const updatedMarine = {
+      id: parseInt(id),
+      name: name,
+      creationDate: creationDate,
+      health: health,
+      height: height,
+      weapon: weapon,
+      meleeWeapon: meleeWeapon,
+      coordinates: coordinates,
+      chapter: chapter
+    }
+
+    console.log(updatedMarine)
+
+    axios
+      .put(`${getBaseUrl()}/marines`, updatedMarine, config)
+      .then((response) => {
+        console.log("Space Marine updated successfully: ", response.status);
+        navigate("/")
+      })
+      .catch((error) => {
+        console.error("Error updating user:", error);
+      });
   }
 
   return (
@@ -268,6 +303,7 @@ const SpaceMarineCard = ({ id }) => {
             class="rounded-md bg-green-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-green-700 focus:shadow-none active:bg-green-700 hover:bg-green-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
             type="submit"
           >
+            {/* TODO: add redirect to /dashboard */}
             Save changes
           </button>
         </div>

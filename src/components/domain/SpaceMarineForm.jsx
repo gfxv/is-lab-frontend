@@ -160,7 +160,7 @@ const SpaceMarineForm = () => {
               onChange={(e) => setWeapon(e.target.value)}
               required
             >
-              <option>...</option>
+              <option selected disabled hidden>...</option>
               {availableWeapons.map((w) => (
                 <option key={w} value={w}>
                   {w}
@@ -179,7 +179,7 @@ const SpaceMarineForm = () => {
               onChange={(e) => setMeleeWeapon(e.target.value)}
               required
             >
-              <option>...</option>
+              <option selected disabled hidden>...</option>
               {Object.values(availableMeleeWeapons).map((mw) => (
                 <option key={mw} value={mw}>
                   {mw}

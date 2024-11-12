@@ -4,7 +4,11 @@ import { Stomp } from "@stomp/stompjs";
 import { getBaseUrl, getWsBaseUrl } from "../global";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowRight,
+  faArrowLeft,
+  faX,
+} from "@fortawesome/free-solid-svg-icons";
 
 import axios from "axios";
 
@@ -54,6 +58,21 @@ const Dashboard = () => {
 
   const handleRowClick = (id) => {
     navigate(`/marines/${id}`);
+  };
+
+  const handleDelete = (id) => {
+    axios
+      .delete(`${getBaseUrl()}/marines/${id}`)
+      .then((response) => {
+        if (response.status === 200) {
+          setData((prevData) => prevData.filter((item) => item.id !== id));
+        } else {
+          console.error("Failed to delete item");
+        }
+      })
+      .catch((error) => {
+        console.error("Error occurred while deleting item:", error);
+      });
   };
 
   const handleNextPage = () => {
@@ -165,6 +184,7 @@ const Dashboard = () => {
             <th className={thStyles}>Coordinate</th>
             <th className={thStyles}>Chapter ID</th>
             <th className={thStyles}>Owner</th>
+            <th className={thStyles}>Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -186,6 +206,18 @@ const Dashboard = () => {
               </td>
               <td className={tdStyles}>{item.chapter.id}</td>
               <td className={tdStyles}>{item.owner.username}</td>
+              <td className={tdStyles}>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleDelete(item.id);
+                  }}
+                  className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  <FontAwesomeIcon icon={faX} className="px-1" />
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

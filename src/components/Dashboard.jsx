@@ -11,6 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import axios from "axios";
+import BaseModal from "./BaseModal";
 
 const Dashboard = () => {
   const [data, setData] = useState([]);
@@ -18,18 +19,30 @@ const Dashboard = () => {
   const stompClientRef = useRef(null);
   const wsUrl = getWsBaseUrl();
 
+  const proccessingMessage = "Proccessing...";
+  const successMessage = "Object deleted successfully";
+  const permissionDeniedMessage = "Permission Denied!";
+  const [modalMessage, setModalMessage] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   const pageMinValue = 0;
-  const [pageMaxValue, setPageMaxValue] = useState(0); // ???
+  const [pageMaxValue, setPageMaxValue] = useState(0);
   const pageSize = 10;
   const [currentPage, setCurrentPage] = useState(pageMinValue);
   const [isFirst, setIsFirst] = useState(true);
   const [isLast, setIsLast] = useState(false);
 
-  const getRecords = (page) => {
-    console.log("triggered get records: " + currentPage);
-    console.log("min: " + pageMinValue);
-    console.log("max: " + pageMaxValue);
+  const token = localStorage.getItem("token");
+  const config = {
+    headers: {
+      Authorization: "Bearer " + token,
+      "Content-Type": "application/json",
+    },
+  };
 
+  const getRecords = (page) => {
     axios
       .get(getBaseUrl() + "/marines", {
         params: {
@@ -61,16 +74,21 @@ const Dashboard = () => {
   };
 
   const handleDelete = (id) => {
+    setModalMessage(proccessingMessage);
+    setIsModalOpen(true);
+
     axios
-      .delete(`${getBaseUrl()}/marines/${id}`)
+      .delete(`${getBaseUrl()}/marines/${id}`, config)
       .then((response) => {
         if (response.status === 200) {
+          setModalMessage(successMessage);
           setData((prevData) => prevData.filter((item) => item.id !== id));
         } else {
           console.error("Failed to delete item");
         }
       })
       .catch((error) => {
+        setModalMessage(error.response.data)
         console.error("Error occurred while deleting item:", error);
       });
   };
@@ -108,18 +126,15 @@ const Dashboard = () => {
   useEffect(() => {
     stompClientRef.current = Stomp.over(() => new SockJS(wsUrl));
     stompClientRef.current.connect({}, (frame) => {
-      console.log("Connected to WebSocket: " + frame);
       stompClientRef.current.subscribe("/records/changes", (message) => {
         updateTable(JSON.parse(message.body));
       });
-
-      console.log("calling getRecords()");
       getRecords(pageMinValue);
     });
 
-    stompClientRef.current.debug = (str) => {
-      console.log("WS Debug:", str);
-    };
+    // stompClientRef.current.debug = (str) => {
+    //   console.log("WS Debug:", str);
+    // };
 
     stompClientRef.current.activate();
     getPagesCount();
@@ -245,6 +260,12 @@ const Dashboard = () => {
           <FontAwesomeIcon icon={faArrowRight} />
         </button>
       </div>
+
+      <BaseModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        message={modalMessage}
+      />
     </div>
   );
 };

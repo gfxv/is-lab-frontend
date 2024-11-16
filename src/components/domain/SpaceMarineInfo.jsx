@@ -53,10 +53,10 @@ const SpaceMarineCard = ({ id }) => {
 
   const handleDelete = () => {
     axios
-      .delete(`${getBaseUrl()}/marines/${id}`)
+      .delete(`${getBaseUrl()}/marines/${id}`, config)
       .then((response) => {
         if (response.status === 200) {
-          navigate("/")
+          navigate("/");
         } else {
           console.error("Failed to delete item");
         }
@@ -84,12 +84,7 @@ const SpaceMarineCard = ({ id }) => {
 
   useEffect(() => {
     axios
-      .get(getBaseUrl() + `/marines/has-access/${id}`, {
-        headers: {
-          Authorization: "Bearer " + token,
-          "Content-Type": "application/json",
-        },
-      })
+      .get(getBaseUrl() + `/marines/has-access/${id}`, config)
       .then((response) => {
         setCanEdit(response.data);
         setIsEditMode(response.data);
@@ -183,9 +178,10 @@ const SpaceMarineCard = ({ id }) => {
     <div className="w-full max-w-lg m-auto mt-5 relative">
       {canEdit && (
         <div className="absolute top-1 right-1">
-          <button 
-          onClick={ handleDelete }
-          className=" bg-red-500 text-white px-2 py-1 rounded shadow-lg hover:bg-red-600">
+          <button
+            onClick={handleDelete}
+            className=" bg-red-500 text-white px-2 py-1 rounded shadow-lg hover:bg-red-600"
+          >
             <FontAwesomeIcon icon={faTrashCan} />
           </button>
         </div>
@@ -253,7 +249,7 @@ const SpaceMarineCard = ({ id }) => {
               className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
               value={weapon}
               onChange={(e) => setWeapon(e.target.value)}
-              required
+              disabled={!canEdit}
             >
               {availableWeapons.map((w) => (
                 <option key={w} value={w}>
@@ -271,7 +267,7 @@ const SpaceMarineCard = ({ id }) => {
               className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
               value={meleeWeapon}
               onChange={(e) => setMeleeWeapon(e.target.value)}
-              required
+              disabled={!canEdit}
             >
               {Object.values(availableMeleeWeapons).map((mw) => (
                 <option key={mw} value={mw}>
@@ -299,20 +295,25 @@ const SpaceMarineCard = ({ id }) => {
               </label>
             </div>
           )}
-          <label className="block text-gray-500 text-sm">
-            Select from table
-          </label>
-          <CoordinatesTable onRowClick={onCoordinateSelection} />
-          <label className="block text-gray-500 text-sm mt-2">
-            Or create a new one
-          </label>
-          <button
-            className="rounded-md bg-sky-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-sky-700 focus:shadow-none active:bg-sky-700 hover:bg-sky-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-            type="button"
-            onClick={() => setIsCoordinatesModalOpen(true)}
-          >
-            New coordinate
-          </button>
+
+          {canEdit && (
+            <>
+              <label className="block text-gray-500 text-sm">
+                Select from table
+              </label>
+              <CoordinatesTable onRowClick={onCoordinateSelection} />
+              <label className="block text-gray-500 text-sm mt-2">
+                Or create a new one
+              </label>
+              <button
+                className="rounded-md bg-sky-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-sky-700 focus:shadow-none active:bg-sky-700 hover:bg-sky-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                type="button"
+                onClick={() => setIsCoordinatesModalOpen(true)}
+              >
+                New coordinate
+              </button>
+            </>
+          )}
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -337,33 +338,50 @@ const SpaceMarineCard = ({ id }) => {
               </label>
             </div>
           )}
-          <label className="block text-gray-500 text-sm">
-            Select from table
-          </label>
-          <ChapterTable
-            data={availableChapters}
-            onRowClick={onChapterSelection}
-          />
-          <label className="block text-gray-500 text-sm mt-2">
-            Or create a new one
-          </label>
-          <button
-            className="rounded-md bg-sky-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-sky-700 focus:shadow-none active:bg-sky-700 hover:bg-sky-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-            type="button"
-            onClick={() => setIsChapterModalOpen(true)}
-          >
-            New chapter
-          </button>
+
+          {canEdit && (
+            <>
+              <label className="block text-gray-500 text-sm">
+                Select from table
+              </label>
+              <ChapterTable
+                data={availableChapters}
+                onRowClick={onChapterSelection}
+              />
+              <label className="block text-gray-500 text-sm mt-2">
+                Or create a new one
+              </label>
+              <button
+                className="rounded-md bg-sky-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-sky-700 focus:shadow-none active:bg-sky-700 hover:bg-sky-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                type="button"
+                onClick={() => setIsChapterModalOpen(true)}
+              >
+                New chapter
+              </button>
+            </>
+          )}
         </div>
 
         <div className="flex justify-center">
-          <button
-            onClick={handleFormSubmit}
-            className="rounded-md bg-green-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-green-700 focus:shadow-none active:bg-green-700 hover:bg-green-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
-            type="submit"
-          >
-            Save changes
-          </button>
+          {canEdit ? (
+            <button
+              onClick={handleFormSubmit}
+              className="rounded-md bg-green-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-green-700 focus:shadow-none active:bg-green-700 hover:bg-green-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
+              type="submit"
+            >
+              Save changes
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={() => navigate("/")}
+                className="rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
+                type="submit"
+              >
+                Go Back
+              </button>
+            </>
+          )}
         </div>
       </div>
 

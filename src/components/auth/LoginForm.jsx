@@ -38,10 +38,10 @@ const LoginForm = () => {
   };
 
   return (
-    <div class="w-full max-w-lg m-auto py-6 px-8 h-80 mt-20 bg-white rounded shadow-xl">
+    <div className="w-full max-w-lg m-auto py-6 px-8 h-80 mt-20 bg-white rounded shadow-xl">
       <form onSubmit={handleSubmitAuth}>
-        <div class="mb-6">
-          <label for="name" class="block text-gray-800 font-bold">
+        <div className="mb-6">
+          <label htmlFor="name" className="block text-gray-800 font-bold">
             Name:
           </label>
           <input
@@ -52,11 +52,11 @@ const LoginForm = () => {
             placeholder="username"
             onChange={(e) => setUsername(e.target.value)}
             aria-invalid="false"
-            class="w-full border border-gray-300 py-2 pl-3 rounded-md mt-2 outline-none"
+            className="w-full border border-gray-300 py-2 pl-3 rounded-md mt-2 outline-none"
           />
         </div>
         <div>
-          <label for="password" class="block text-gray-800 font-bold">
+          <label htmlFor="password" className="block text-gray-800 font-bold">
             Password:
           </label>
           <input
@@ -66,11 +66,11 @@ const LoginForm = () => {
             id="password"
             placeholder="password"
             onChange={(e) => setPassword(e.target.value)}
-            class="w-full border border-gray-300 py-2 pl-3 rounded-md mt-2 outline-none "
+            className="w-full border border-gray-300 py-2 pl-3 rounded-md mt-2 outline-none "
           />
         </div>
-        {error && <div class="mt-2 text-red-600">{error}</div>}
-        <button class="cursor-pointer py-2 px-4 block mt-6 bg-blue-500 text-white font-bold w-full text-center rounded-md">
+        {error && <div className="mt-2 text-red-600">{error}</div>}
+        <button className="cursor-pointer py-2 px-4 block mt-6 bg-blue-500 text-white font-bold w-full text-center rounded-md">
           Login
         </button>
 

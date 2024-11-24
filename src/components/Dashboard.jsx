@@ -8,7 +8,6 @@ import {
   faArrowRight,
   faArrowLeft,
   faX,
-  faSort,
   faSortUp,
   faSortDown,
 } from "@fortawesome/free-solid-svg-icons";
@@ -39,6 +38,8 @@ const Dashboard = () => {
 
   const [sortColumn, setSortColumn] = useState(null);
   const [sortDirection, setSortDirection] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterColumn, setFilterColumn] = useState("id");
 
   const token = localStorage.getItem("token");
   const config = {
@@ -183,10 +184,28 @@ const Dashboard = () => {
     }
   };
 
-  const sortedData = [...data].sort((a, b) => {
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleFilterColumnChange = (e) => {
+    setFilterColumn(e.target.value);
+  };
+
+  const getNestedValue = (item, column) => {
+    return column.split(".").reduce((obj, key) => (obj && obj[key] !== 'undefined') ? obj[key] : null, item);
+  };
+
+  const filteredData = data.filter((item) => {
+    if (!searchQuery) return true;
+    const columnValue = getNestedValue(item, filterColumn);
+    return String(columnValue) === searchQuery;
+  });
+
+  const sortedData = [...filteredData].sort((a, b) => {
     if (!sortColumn) return 0;
-    const aValue = a[sortColumn];
-    const bValue = b[sortColumn];
+    const aValue = getNestedValue(a, sortColumn);
+    const bValue = getNestedValue(b, sortColumn);
     if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
     if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
     return 0;
@@ -198,9 +217,32 @@ const Dashboard = () => {
   return (
     <div className="max-w-5xl m-auto overflow-x-auto">
       <h1 className="text-2xl font-bold mt-6 mb-1">Space Marine Dashboard</h1>
-      <div className="flex justify-end">
+      <div className="flex justify-end mb-3">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchQuery}
+          onChange={handleSearch}
+          className="border border-gray-300 rounded px-2 py-1 mr-2"
+        />
+        <select
+          value={filterColumn}
+          onChange={handleFilterColumnChange}
+          className="border border-gray-300 rounded px-2 py-1 mr-2"
+        >
+          <option value="id">ID</option>
+          <option value="name">Name</option>
+          <option value="creationDate">Creation Date</option>
+          <option value="health">Health</option>
+          <option value="height">Height</option>
+          <option value="weapon">Weapon</option>
+          <option value="meleeWeapon">Melee Weapon</option>
+          <option value="coordinates">Coordinate</option>
+          <option value="chapter.id">Chapter ID</option>
+          <option value="owner.username">Owner</option>
+        </select>
         <Link
-          class="rounded-md bg-sky-600 py-2 px-3 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-sky-700 focus:shadow-none active:bg-sky-700 hover:bg-sky-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+          className="rounded-md bg-sky-600 py-2 px-3 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-sky-700 focus:shadow-none active:bg-sky-700 hover:bg-sky-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
           to={"/marines/new"}
         >
           New Space Marine

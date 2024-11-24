@@ -32,7 +32,8 @@ const LoginForm = () => {
       console.log("Login successful:", token);
       navigate("/dashboard")
     } catch (err) {
-      setError("Login failed. Please check your username and password.");
+      console.log(err)
+      setError(`Login failed. ${err.message}.`);
       console.error("Error:", err.message);
     }
   };

@@ -8,6 +8,9 @@ import {
   faArrowRight,
   faArrowLeft,
   faX,
+  faSort,
+  faSortUp,
+  faSortDown,
 } from "@fortawesome/free-solid-svg-icons";
 
 import axios from "axios";
@@ -33,6 +36,9 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(pageMinValue);
   const [isFirst, setIsFirst] = useState(true);
   const [isLast, setIsLast] = useState(false);
+
+  const [sortColumn, setSortColumn] = useState(null);
+  const [sortDirection, setSortDirection] = useState(null);
 
   const token = localStorage.getItem("token");
   const config = {
@@ -132,10 +138,6 @@ const Dashboard = () => {
       getRecords(pageMinValue);
     });
 
-    // stompClientRef.current.debug = (str) => {
-    //   console.log("WS Debug:", str);
-    // };
-
     stompClientRef.current.activate();
     getPagesCount();
     return () => {
@@ -172,7 +174,25 @@ const Dashboard = () => {
     }
   };
 
-  const thStyles = "py-1 px-1 border-b";
+  const handleSort = (column) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortColumn(column);
+      setSortDirection("asc");
+    }
+  };
+
+  const sortedData = [...data].sort((a, b) => {
+    if (!sortColumn) return 0;
+    const aValue = a[sortColumn];
+    const bValue = b[sortColumn];
+    if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  const thStyles = "py-1 px-1 border-b cursor-pointer";
   const tdStyles = "py-2 px-2 border-b text-center";
 
   return (
@@ -189,21 +209,41 @@ const Dashboard = () => {
       <table className="min-w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-md">
         <thead>
           <tr className="bg-gray-100 text-gray-600 uppercase text-sm">
-            <th className={thStyles}>ID</th>
-            <th className={thStyles}>Name</th>
-            <th className={thStyles}>Creation Date</th>
-            <th className={thStyles}>Health</th>
-            <th className={thStyles}>Height</th>
-            <th className={thStyles}>Weapon</th>
-            <th className={thStyles}>Melee Weapon</th>
-            <th className={thStyles}>Coordinate</th>
-            <th className={thStyles}>Chapter ID</th>
-            <th className={thStyles}>Owner</th>
+            <th className={thStyles} onClick={() => handleSort("id")}>
+              ID {sortColumn === "id" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+            </th>
+            <th className={thStyles} onClick={() => handleSort("name")}>
+              Name {sortColumn === "name" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+            </th>
+            <th className={thStyles} onClick={() => handleSort("creationDate")}>
+              Creation Date {sortColumn === "creationDate" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+            </th>
+            <th className={thStyles} onClick={() => handleSort("health")}>
+              Health {sortColumn === "health" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+            </th>
+            <th className={thStyles} onClick={() => handleSort("height")}>
+              Height {sortColumn === "height" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+            </th>
+            <th className={thStyles} onClick={() => handleSort("weapon")}>
+              Weapon {sortColumn === "weapon" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+            </th>
+            <th className={thStyles} onClick={() => handleSort("meleeWeapon")}>
+              Melee Weapon {sortColumn === "meleeWeapon" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+            </th>
+            <th className={thStyles} onClick={() => handleSort("coordinates")}>
+              Coordinate {sortColumn === "coordinates" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+            </th>
+            <th className={thStyles} onClick={() => handleSort("chapter.id")}>
+              Chapter ID {sortColumn === "chapter.id" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+            </th>
+            <th className={thStyles} onClick={() => handleSort("owner.username")}>
+              Owner {sortColumn === "owner.username" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+            </th>
             <th className={thStyles}>Delete</th>
           </tr>
         </thead>
         <tbody>
-          {data.map((item) => (
+          {sortedData.map((item) => (
             <tr
               key={item.id}
               className="hover:bg-gray-50 hover:cursor-pointer"

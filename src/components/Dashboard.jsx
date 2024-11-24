@@ -14,6 +14,8 @@ import {
 
 import axios from "axios";
 import BaseModal from "./BaseModal";
+import ChapterManagerModal from "./ChapterManagerModal";
+import ToggleManagerModal from "./ToggleManagerMadal";
 
 const Dashboard = () => {
   const [data, setData] = useState([]);
@@ -28,6 +30,10 @@ const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  const [isManagerModalOpen, setIsManagerModalOpen] = useState(false);
+  const openMangerModal = () => setIsManagerModalOpen(true);
+  const closeMangerModal = () => setIsManagerModalOpen(false);
 
   const pageMinValue = 0;
   const [pageMaxValue, setPageMaxValue] = useState(0);
@@ -217,36 +223,39 @@ const Dashboard = () => {
   return (
     <div className="max-w-5xl m-auto overflow-x-auto">
       <h1 className="text-2xl font-bold mt-6 mb-1">Space Marine Dashboard</h1>
-      <div className="flex justify-end mb-3">
-        <input
-          type="text"
-          placeholder="Search..."
-          value={searchQuery}
-          onChange={handleSearch}
-          className="border border-gray-300 rounded px-2 py-1 mr-2"
-        />
-        <select
-          value={filterColumn}
-          onChange={handleFilterColumnChange}
-          className="border border-gray-300 rounded px-2 py-1 mr-2"
-        >
-          <option value="id">ID</option>
-          <option value="name">Name</option>
-          <option value="creationDate">Creation Date</option>
-          <option value="health">Health</option>
-          <option value="height">Height</option>
-          <option value="weapon">Weapon</option>
-          <option value="meleeWeapon">Melee Weapon</option>
-          <option value="coordinates">Coordinate</option>
-          <option value="chapter.id">Chapter ID</option>
-          <option value="owner.username">Owner</option>
-        </select>
-        <Link
-          className="rounded-md bg-sky-600 py-2 px-3 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-sky-700 focus:shadow-none active:bg-sky-700 hover:bg-sky-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-          to={"/marines/new"}
-        >
-          New Space Marine
-        </Link>
+      <div className="flex justify-between mb-3">
+        <ToggleManagerModal text="Manage Chapters" openModal={openMangerModal} />
+        <div className="flex">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={handleSearch}
+            className="border border-gray-300 rounded px-2 py-1 mr-2"
+          />
+          <select
+            value={filterColumn}
+            onChange={handleFilterColumnChange}
+            className="border border-gray-300 rounded px-2 py-1 mr-2"
+          >
+            <option value="id">ID</option>
+            <option value="name">Name</option>
+            <option value="creationDate">Creation Date</option>
+            <option value="health">Health</option>
+            <option value="height">Height</option>
+            <option value="weapon">Weapon</option>
+            <option value="meleeWeapon">Melee Weapon</option>
+            <option value="coordinates">Coordinate</option>
+            <option value="chapter.id">Chapter ID</option>
+            <option value="owner.username">Owner</option>
+          </select>
+          <Link
+            className="rounded-md bg-sky-600 py-2 px-3 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-sky-700 focus:shadow-none active:bg-sky-700 hover:bg-sky-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            to={"/marines/new"}
+          >
+            New Space Marine
+          </Link>
+        </div>
       </div>
       <table className="min-w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-md">
         <thead>
@@ -348,6 +357,7 @@ const Dashboard = () => {
         onClose={closeModal}
         message={modalMessage}
       />
+      <ChapterManagerModal isOpen={isManagerModalOpen} onClose={closeMangerModal} />
     </div>
   );
 };

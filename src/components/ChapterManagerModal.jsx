@@ -1,9 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { getBaseUrl } from "../global";
 import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faX,
+} from "@fortawesome/free-solid-svg-icons";
 
 const ChapterManagerModal = ({ isOpen, onClose }) => {
   const [data, setData] = useState([]);
+
+  const proccessingMessage = "Proccessing...";
+  const successMessage = "Object deleted successfully";
+  const permissionDeniedMessage = "Permission Denied!";
+
+  const [modalMessage, setModalMessage] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   const handleSelection = (item) => {
     // onRowClick(item);
@@ -15,6 +28,26 @@ const ChapterManagerModal = ({ isOpen, onClose }) => {
       Authorization: "Bearer " + token,
       "Content-Type": "application/json",
     },
+  };
+
+  const handleDelete = (id) => {
+    setModalMessage(proccessingMessage);
+    setIsModalOpen(true);
+
+    axios
+      .delete(`${getBaseUrl()}/chapters/${id}`, config)
+      .then((response) => {
+        if (response.status === 200) {
+          setModalMessage(successMessage);
+          setData((prevData) => prevData.filter((item) => item.id !== id));
+        } else {
+          console.error("Failed to delete item");
+        }
+      })
+      .catch((error) => {
+        setModalMessage(error.response.data)
+        console.error("Error occurred while deleting item:", error);
+      });
   };
 
   useEffect(() => {
@@ -52,6 +85,9 @@ const ChapterManagerModal = ({ isOpen, onClose }) => {
                 <th className="px-2 py-1 text-left text-sm font-medium text-gray-700">
                   World
                 </th>
+                <th className="px-2 py-1 text-left text-sm font-medium text-gray-700">
+                  Delete
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -73,6 +109,18 @@ const ChapterManagerModal = ({ isOpen, onClose }) => {
                   </td>
                   <td className="px-2 py-1 text-sm text-gray-600">
                     {item.world}
+                  </td>
+                  <td className="px-2 py-1 text-sm text-gray-600">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleDelete(item.id);
+                      }}
+                      className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                      <FontAwesomeIcon icon={faX} className="px-1" />
+                    </button>
                   </td>
                 </tr>
               ))}

@@ -76,12 +76,6 @@ const SpaceMarineCard = ({ id }) => {
     setIsChapterSelected(true);
   };
 
-  const modifyObject = () => {
-    // set inputs to 'modify' mode
-    // show table + 'create new' buttons
-    // ...
-  };
-
   useEffect(() => {
     axios
       .get(getBaseUrl() + `/marines/has-access/${id}`, config)

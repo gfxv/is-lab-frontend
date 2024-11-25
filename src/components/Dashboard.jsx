@@ -224,7 +224,7 @@ const Dashboard = () => {
     <div className="max-w-5xl m-auto overflow-x-auto">
       <h1 className="text-2xl font-bold mt-6 mb-1">Space Marine Dashboard</h1>
       <div className="flex justify-between mb-3">
-        <ToggleManagerModal text="Manage Chapters" openModal={openMangerModal} />
+        <ToggleManagerModal text="Manage My Chapters" openModal={openMangerModal} />
         <div className="flex">
           <input
             type="text"

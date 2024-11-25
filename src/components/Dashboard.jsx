@@ -15,6 +15,7 @@ import {
 import axios from "axios";
 import BaseModal from "./BaseModal";
 import ChapterManagerModal from "./ChapterManagerModal";
+import CoordinatesManagerModal from "./CoordinatesManagerModal";
 import ToggleManagerModal from "./ToggleManagerMadal";
 
 const Dashboard = () => {
@@ -31,9 +32,17 @@ const Dashboard = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const [isManagerModalOpen, setIsManagerModalOpen] = useState(false);
-  const openMangerModal = () => setIsManagerModalOpen(true);
-  const closeMangerModal = () => setIsManagerModalOpen(false);
+  const [isChapterManagerModalOpen, setIsChapterManagerModalOpen] =
+    useState(false);
+  const openChapterManagerModal = () => setIsChapterManagerModalOpen(true);
+  const closeChapterManagerModal = () => setIsChapterManagerModalOpen(false);
+
+  const [isCoordinateManagerModalOpen, setIsCoordinateManagerModalOpen] =
+    useState(false);
+  const openCoordinateManagerModal = () =>
+    setIsCoordinateManagerModalOpen(true);
+  const closeCoordinateManagerModal = () =>
+    setIsCoordinateManagerModalOpen(false);
 
   const pageMinValue = 0;
   const [pageMaxValue, setPageMaxValue] = useState(0);
@@ -101,7 +110,7 @@ const Dashboard = () => {
         }
       })
       .catch((error) => {
-        setModalMessage(error.response.data)
+        setModalMessage(error.response.data);
         console.error("Error occurred while deleting item:", error);
       });
   };
@@ -199,7 +208,12 @@ const Dashboard = () => {
   };
 
   const getNestedValue = (item, column) => {
-    return column.split(".").reduce((obj, key) => (obj && obj[key] !== 'undefined') ? obj[key] : null, item);
+    return column
+      .split(".")
+      .reduce(
+        (obj, key) => (obj && obj[key] !== "undefined" ? obj[key] : null),
+        item
+      );
   };
 
   const filteredData = data.filter((item) => {
@@ -224,19 +238,32 @@ const Dashboard = () => {
     <div className="max-w-5xl m-auto overflow-x-auto">
       <h1 className="text-2xl font-bold mt-6 mb-1">Space Marine Dashboard</h1>
       <div className="flex justify-between mb-3">
-        <ToggleManagerModal text="Manage My Chapters" openModal={openMangerModal} />
-        <div className="flex">
+        <div className="flex space-x-2">
+          <ToggleManagerModal
+            text="Manage My Chapters"
+            openModal={openChapterManagerModal}
+            color="bg-orange-500"
+            hoverColor="bg-orange-600"
+          />
+          <ToggleManagerModal
+            text="Manage My Coordinates"
+            openModal={openCoordinateManagerModal}
+            color="bg-purple-500"
+            hoverColor="bg-purple-600"
+          />
+        </div>
+        <div className="flex space-x-2">
           <input
             type="text"
             placeholder="Search..."
             value={searchQuery}
             onChange={handleSearch}
-            className="border border-gray-300 rounded px-2 py-1 mr-2"
+            className="border border-gray-300 rounded px-2 py-1"
           />
           <select
             value={filterColumn}
             onChange={handleFilterColumnChange}
-            className="border border-gray-300 rounded px-2 py-1 mr-2"
+            className="border border-gray-300 rounded px-2 py-1"
           >
             <option value="id">ID</option>
             <option value="name">Name</option>
@@ -261,34 +288,97 @@ const Dashboard = () => {
         <thead>
           <tr className="bg-gray-100 text-gray-600 uppercase text-sm">
             <th className={thStyles} onClick={() => handleSort("id")}>
-              ID {sortColumn === "id" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+              ID{" "}
+              {sortColumn === "id" &&
+                (sortDirection === "asc" ? (
+                  <FontAwesomeIcon icon={faSortUp} />
+                ) : (
+                  <FontAwesomeIcon icon={faSortDown} />
+                ))}
             </th>
             <th className={thStyles} onClick={() => handleSort("name")}>
-              Name {sortColumn === "name" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+              Name{" "}
+              {sortColumn === "name" &&
+                (sortDirection === "asc" ? (
+                  <FontAwesomeIcon icon={faSortUp} />
+                ) : (
+                  <FontAwesomeIcon icon={faSortDown} />
+                ))}
             </th>
             <th className={thStyles} onClick={() => handleSort("creationDate")}>
-              Creation Date {sortColumn === "creationDate" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+              Creation Date{" "}
+              {sortColumn === "creationDate" &&
+                (sortDirection === "asc" ? (
+                  <FontAwesomeIcon icon={faSortUp} />
+                ) : (
+                  <FontAwesomeIcon icon={faSortDown} />
+                ))}
             </th>
             <th className={thStyles} onClick={() => handleSort("health")}>
-              Health {sortColumn === "health" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+              Health{" "}
+              {sortColumn === "health" &&
+                (sortDirection === "asc" ? (
+                  <FontAwesomeIcon icon={faSortUp} />
+                ) : (
+                  <FontAwesomeIcon icon={faSortDown} />
+                ))}
             </th>
             <th className={thStyles} onClick={() => handleSort("height")}>
-              Height {sortColumn === "height" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+              Height{" "}
+              {sortColumn === "height" &&
+                (sortDirection === "asc" ? (
+                  <FontAwesomeIcon icon={faSortUp} />
+                ) : (
+                  <FontAwesomeIcon icon={faSortDown} />
+                ))}
             </th>
             <th className={thStyles} onClick={() => handleSort("weapon")}>
-              Weapon {sortColumn === "weapon" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+              Weapon{" "}
+              {sortColumn === "weapon" &&
+                (sortDirection === "asc" ? (
+                  <FontAwesomeIcon icon={faSortUp} />
+                ) : (
+                  <FontAwesomeIcon icon={faSortDown} />
+                ))}
             </th>
             <th className={thStyles} onClick={() => handleSort("meleeWeapon")}>
-              Melee Weapon {sortColumn === "meleeWeapon" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+              Melee Weapon{" "}
+              {sortColumn === "meleeWeapon" &&
+                (sortDirection === "asc" ? (
+                  <FontAwesomeIcon icon={faSortUp} />
+                ) : (
+                  <FontAwesomeIcon icon={faSortDown} />
+                ))}
             </th>
             <th className={thStyles} onClick={() => handleSort("coordinates")}>
-              Coordinate {sortColumn === "coordinates" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+              Coordinate{" "}
+              {sortColumn === "coordinates" &&
+                (sortDirection === "asc" ? (
+                  <FontAwesomeIcon icon={faSortUp} />
+                ) : (
+                  <FontAwesomeIcon icon={faSortDown} />
+                ))}
             </th>
             <th className={thStyles} onClick={() => handleSort("chapter.id")}>
-              Chapter ID {sortColumn === "chapter.id" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+              Chapter ID{" "}
+              {sortColumn === "chapter.id" &&
+                (sortDirection === "asc" ? (
+                  <FontAwesomeIcon icon={faSortUp} />
+                ) : (
+                  <FontAwesomeIcon icon={faSortDown} />
+                ))}
             </th>
-            <th className={thStyles} onClick={() => handleSort("owner.username")}>
-              Owner {sortColumn === "owner.username" && (sortDirection === "asc" ? <FontAwesomeIcon icon={faSortUp} /> : <FontAwesomeIcon icon={faSortDown} />)}
+            <th
+              className={thStyles}
+              onClick={() => handleSort("owner.username")}
+            >
+              Owner{" "}
+              {sortColumn === "owner.username" &&
+                (sortDirection === "asc" ? (
+                  <FontAwesomeIcon icon={faSortUp} />
+                ) : (
+                  <FontAwesomeIcon icon={faSortDown} />
+                ))}
             </th>
             <th className={thStyles}>Delete</th>
           </tr>
@@ -357,7 +447,15 @@ const Dashboard = () => {
         onClose={closeModal}
         message={modalMessage}
       />
-      <ChapterManagerModal isOpen={isManagerModalOpen} onClose={closeMangerModal} />
+
+      <ChapterManagerModal
+        isOpen={isChapterManagerModalOpen}
+        onClose={closeChapterManagerModal}
+      />
+      <CoordinatesManagerModal
+        isOpen={isCoordinateManagerModalOpen}
+        onClose={closeCoordinateManagerModal}
+      />
     </div>
   );
 };

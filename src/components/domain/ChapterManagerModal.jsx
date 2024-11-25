@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getBaseUrl } from "../global";
+import { getBaseUrl } from "../../global";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {

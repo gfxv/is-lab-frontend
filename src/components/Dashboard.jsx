@@ -14,8 +14,8 @@ import {
 
 import axios from "axios";
 import BaseModal from "./BaseModal";
-import ChapterManagerModal from "./ChapterManagerModal";
-import CoordinatesManagerModal from "./CoordinatesManagerModal";
+import ChapterManagerModal from "./domain/ChapterManagerModal";
+import CoordinatesManagerModal from "./domain/CoordinatesManagerModal";
 import ToggleManagerModal from "./ToggleManagerMadal";
 
 const Dashboard = () => {
@@ -32,17 +32,13 @@ const Dashboard = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const [isChapterManagerModalOpen, setIsChapterManagerModalOpen] =
-    useState(false);
+  const [isChapterManagerModalOpen, setIsChapterManagerModalOpen] = useState(false);
   const openChapterManagerModal = () => setIsChapterManagerModalOpen(true);
   const closeChapterManagerModal = () => setIsChapterManagerModalOpen(false);
 
-  const [isCoordinateManagerModalOpen, setIsCoordinateManagerModalOpen] =
-    useState(false);
-  const openCoordinateManagerModal = () =>
-    setIsCoordinateManagerModalOpen(true);
-  const closeCoordinateManagerModal = () =>
-    setIsCoordinateManagerModalOpen(false);
+  const [isCoordinateManagerModalOpen, setIsCoordinateManagerModalOpen] = useState(false);
+  const openCoordinateManagerModal = () => setIsCoordinateManagerModalOpen(true);
+  const closeCoordinateManagerModal = () => setIsCoordinateManagerModalOpen(false);
 
   const pageMinValue = 0;
   const [pageMaxValue, setPageMaxValue] = useState(0);
@@ -240,13 +236,13 @@ const Dashboard = () => {
       <div className="flex justify-between mb-3">
         <div className="flex space-x-2">
           <ToggleManagerModal
-            text="Manage My Chapters"
+            text="Manage Chapters"
             openModal={openChapterManagerModal}
             color="bg-orange-500"
             hoverColor="bg-orange-600"
           />
           <ToggleManagerModal
-            text="Manage My Coordinates"
+            text="Manage Coordinates"
             openModal={openCoordinateManagerModal}
             color="bg-purple-500"
             hoverColor="bg-purple-600"

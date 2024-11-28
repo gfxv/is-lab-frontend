@@ -32,13 +32,21 @@ const Dashboard = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const [isChapterManagerModalOpen, setIsChapterManagerModalOpen] = useState(false);
+  const [isChapterManagerModalOpen, setIsChapterManagerModalOpen] =
+    useState(false);
   const openChapterManagerModal = () => setIsChapterManagerModalOpen(true);
   const closeChapterManagerModal = () => setIsChapterManagerModalOpen(false);
 
-  const [isCoordinateManagerModalOpen, setIsCoordinateManagerModalOpen] = useState(false);
-  const openCoordinateManagerModal = () => setIsCoordinateManagerModalOpen(true);
-  const closeCoordinateManagerModal = () => setIsCoordinateManagerModalOpen(false);
+  const [isCoordinateManagerModalOpen, setIsCoordinateManagerModalOpen] =
+    useState(false);
+  const openCoordinateManagerModal = () =>
+    setIsCoordinateManagerModalOpen(true);
+  const closeCoordinateManagerModal = () =>
+    setIsCoordinateManagerModalOpen(false);
+
+  const [isAgregateModalOpen, setIsAgregateModalOpen] = useState(false);
+  const openAgregateModal = () => setIsAgregateModalOpen(true);
+  const closeAgregateModal = () => setIsAgregateModalOpen(false);
 
   const pageMinValue = 0;
   const [pageMaxValue, setPageMaxValue] = useState(0);
@@ -247,6 +255,18 @@ const Dashboard = () => {
             color="bg-purple-500"
             hoverColor="bg-purple-600"
           />
+          <Link
+            to="/aggregated"
+            className="rounded-md bg-teal-500 py-2 px-3 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:shadow-none hover:bg-teal-600 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+          >
+            Agregators
+          </Link>
+          {/* <ToggleManagerModal
+            text="Agregators"
+            openModal={openAgregateModal}
+            color="bg-teal-500"
+            hoverColor="bg-teal-600"
+          /> */}
         </div>
         <div className="flex space-x-2">
           <input

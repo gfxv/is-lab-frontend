@@ -18,6 +18,7 @@ import {
   GlobalStateProvider,
   useGlobalState,
 } from "./providers/GlobalStateContext";
+import Aggregators from "./pages/Agregators";
 
 const isAuthenticated = () => {
   return localStorage.getItem("token") !== null;
@@ -55,6 +56,10 @@ function App() {
           <Route
             path="/marines/new"
             element={<PrivateRoute>{<NewSpaceMarinePage />}</PrivateRoute>}
+          />
+          <Route
+            path="/aggregated"
+            element={<PrivateRoute>{<Aggregators />}</PrivateRoute>}
           />
         </Routes>
       </Router>

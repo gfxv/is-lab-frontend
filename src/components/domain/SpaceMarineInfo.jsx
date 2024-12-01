@@ -3,15 +3,18 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { getBaseUrl } from "../../global";
 
+import HistoryModal from "../HistoryModal";
 import NewCoordinatesModal from "./NewCoordinatesModal";
 import NewChapterModal from "./NewChapterModal";
 import CoordinatesTable from "./CoordinatesTable";
 import ChapterTable from "./ChapterTable";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan, faHistory } from "@fortawesome/free-solid-svg-icons";
 
 const SpaceMarineCard = ({ id }) => {
+  const [history, setHistory] = useState([]);
+
   const [availableWeapons, setAvailableWeapons] = useState([]);
   const [availableMeleeWeapons, setAvailableMeleeWeapons] = useState([]);
   const [availableCoordinates, setAvailableCoordinates] = useState([]);
@@ -38,6 +41,10 @@ const SpaceMarineCard = ({ id }) => {
 
   const [isCoordinateSelected, setIsCoordinateSelected] = useState(false);
   const [isChapterSelected, setIsChapterSelected] = useState(false);
+
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const openHistoryModal = () => setIsHistoryModalOpen(true);
+  const closeHistoryModal = () => setIsHistoryModalOpen(false);
 
   const [canEdit, setCanEdit] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -113,6 +120,16 @@ const SpaceMarineCard = ({ id }) => {
       .catch((error) => {
         console.error("Error:", error);
       });
+
+    axios
+      .get(getBaseUrl() + `/marines/history/${id}`)
+      .then((response) => {
+        console.log(response.data);
+        setHistory(response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   }, []);
 
   const setData = (info) => {
@@ -170,16 +187,23 @@ const SpaceMarineCard = ({ id }) => {
 
   return (
     <div className="w-full max-w-lg m-auto mt-5 relative">
-      {canEdit && (
+      
         <div className="absolute top-1 right-1">
           <button
+            onClick={openHistoryModal}
+            className="bg-cyan-500 text-white px-2 py-1 rounded shadow-lg hover:bg-cyan-600"
+          >
+            <FontAwesomeIcon icon={faHistory} />
+          </button>
+          {canEdit && (
+          <button
             onClick={handleDelete}
-            className=" bg-red-500 text-white px-2 py-1 rounded shadow-lg hover:bg-red-600"
+            className=" bg-red-500 ml-1 text-white px-2 py-1 rounded shadow-lg hover:bg-red-600"
           >
             <FontAwesomeIcon icon={faTrashCan} />
           </button>
+          )}
         </div>
-      )}
 
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div className="mb-4">
@@ -389,6 +413,12 @@ const SpaceMarineCard = ({ id }) => {
         isOpen={isChaptersModalOpen}
         onClose={() => setIsChapterModalOpen(false)}
         onSave={(newChapter) => setChapter(newChapter)}
+      />
+
+      <HistoryModal
+        isOpen={isHistoryModalOpen}
+        onClose={closeHistoryModal}
+        history={history}
       />
     </div>
   );

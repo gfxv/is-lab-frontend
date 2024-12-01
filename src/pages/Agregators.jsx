@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { getBaseUrl } from "../global";
+import React from "react";
 import WeaponTypeGroup from "../components/WeaponTypeGroup";
 import HeightCount from "../components/HeightCount";
 import Header from "../components/Header";

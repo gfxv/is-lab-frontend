@@ -187,23 +187,22 @@ const SpaceMarineCard = ({ id }) => {
 
   return (
     <div className="w-full max-w-lg m-auto mt-5 relative">
-      
-        <div className="absolute top-1 right-1">
-          <button
-            onClick={openHistoryModal}
-            className="bg-cyan-500 text-white px-2 py-1 rounded shadow-lg hover:bg-cyan-600"
-          >
-            <FontAwesomeIcon icon={faHistory} />
-          </button>
-          {canEdit && (
+      <div className="absolute top-1 right-1">
+        <button
+          onClick={openHistoryModal}
+          className="bg-cyan-500 text-white px-2 py-1 rounded shadow-lg hover:bg-cyan-600"
+        >
+          <FontAwesomeIcon icon={faHistory} />
+        </button>
+        {canEdit && (
           <button
             onClick={handleDelete}
             className=" bg-red-500 ml-1 text-white px-2 py-1 rounded shadow-lg hover:bg-red-600"
           >
             <FontAwesomeIcon icon={faTrashCan} />
           </button>
-          )}
-        </div>
+        )}
+      </div>
 
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div className="mb-4">
@@ -381,7 +380,16 @@ const SpaceMarineCard = ({ id }) => {
         </div>
 
         <div className="flex justify-center">
-          {canEdit ? (
+          <>
+            <button
+              onClick={() => navigate("/")}
+              className="rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
+              type="submit"
+            >
+              Go Back
+            </button>
+          </>
+          {canEdit && (
             <button
               onClick={handleFormSubmit}
               className="rounded-md bg-green-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-green-700 focus:shadow-none active:bg-green-700 hover:bg-green-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
@@ -389,16 +397,6 @@ const SpaceMarineCard = ({ id }) => {
             >
               Save changes
             </button>
-          ) : (
-            <>
-              <button
-                onClick={() => navigate("/")}
-                className="rounded-md bg-blue-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-blue-700 focus:shadow-none active:bg-blue-700 hover:bg-blue-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none ml-2"
-                type="submit"
-              >
-                Go Back
-              </button>
-            </>
           )}
         </div>
       </div>

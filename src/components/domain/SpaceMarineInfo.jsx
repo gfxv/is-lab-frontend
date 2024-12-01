@@ -337,23 +337,38 @@ const SpaceMarineCard = ({ id }) => {
             Chapter:
           </label>
           {isChapterSelected && (
-            <div>
-              <label className="block text-gray-700 text-sm font-mono">
-                Selected Chapter:
-              </label>
-              <label className="block text-gray-700 text-sm font-mono">
-                name: {chapter.name}
-              </label>
-              <label className="block text-gray-700 text-sm font-mono">
-                parent legion: {chapter.parentLegion}
-              </label>
-              <label className="block text-gray-700 text-sm font-mono">
-                marines count: {chapter.marinesCount}
-              </label>
-              <label className="block text-gray-700 text-sm font-mono mb-2">
-                world: {chapter.world}
-              </label>
-            </div>
+            <>
+              <div>
+                <label className="block text-gray-700 text-sm font-mono">
+                  Selected Chapter:
+                </label>
+                <label className="block text-gray-700 text-sm font-mono">
+                  name: {chapter.name}
+                </label>
+                <label className="block text-gray-700 text-sm font-mono">
+                  parent legion: {chapter.parentLegion}
+                </label>
+                <label className="block text-gray-700 text-sm font-mono">
+                  marines count: {chapter.marinesCount}
+                </label>
+                <label className="block text-gray-700 text-sm font-mono mb-2">
+                  world: {chapter.world}
+                </label>
+              </div>
+
+              {canEdit && (
+                <button
+                  className="rounded-md mb-3 bg-stone-600 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-stone-700 focus:shadow-none active:bg-stone-700 hover:bg-stone-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  type="button"
+                  onClick={() => {
+                    setChapter(null)
+                    setIsChapterSelected(false)
+                  }}
+                >
+                  Expel Marine
+                </button>
+              )}
+            </>
           )}
 
           {canEdit && (

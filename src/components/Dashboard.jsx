@@ -10,6 +10,7 @@ import {
   faX,
   faSortUp,
   faSortDown,
+  faClockRotateLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
 import axios from "axios";
@@ -17,6 +18,8 @@ import BaseModal from "./BaseModal";
 import ChapterManagerModal from "./domain/ChapterManagerModal";
 import CoordinatesManagerModal from "./domain/CoordinatesManagerModal";
 import ToggleManagerModal from "./ToggleManagerMadal";
+import ImportModal from "./ImportModal";
+import ImportHistoryModal from "./ImportHistoryModal";
 
 const Dashboard = () => {
   const [data, setData] = useState([]);
@@ -43,6 +46,15 @@ const Dashboard = () => {
     setIsCoordinateManagerModalOpen(true);
   const closeCoordinateManagerModal = () =>
     setIsCoordinateManagerModalOpen(false);
+
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const openImportModal = () => setIsImportModalOpen(true);
+  const closeImportModal = () => setIsImportModalOpen(false);
+
+  const [isImportHistoryModalOpen, setIsImportHistoryModalOpen] =
+    useState(false);
+  const openImportHistoryModal = () => setIsImportHistoryModalOpen(true);
+  const closeImportHistoryModal = () => setIsImportHistoryModalOpen(false);
 
   const [isAgregateModalOpen, setIsAgregateModalOpen] = useState(false);
   const openAgregateModal = () => setIsAgregateModalOpen(true);
@@ -244,13 +256,13 @@ const Dashboard = () => {
       <div className="flex justify-between mb-3">
         <div className="flex space-x-2">
           <ToggleManagerModal
-            text="Manage Chapters"
+            text="Chapters"
             openModal={openChapterManagerModal}
             color="bg-orange-500"
             hoverColor="bg-orange-600"
           />
           <ToggleManagerModal
-            text="Manage Coordinates"
+            text="Coordinates"
             openModal={openCoordinateManagerModal}
             color="bg-purple-500"
             hoverColor="bg-purple-600"
@@ -261,12 +273,18 @@ const Dashboard = () => {
           >
             Agregators
           </Link>
-          {/* <ToggleManagerModal
-            text="Agregators"
-            openModal={openAgregateModal}
-            color="bg-teal-500"
-            hoverColor="bg-teal-600"
-          /> */}
+          <ToggleManagerModal
+            text="Import"
+            openModal={openImportModal}
+            color="bg-pink-500"
+            hoverColor="bg-pink-600"
+          />
+          <ToggleManagerModal
+            text={<FontAwesomeIcon icon={faClockRotateLeft} />}
+            openModal={openImportHistoryModal}
+            color="bg-yellow-500"
+            hoverColor="bg-yellow-600"
+          />
         </div>
         <div className="flex space-x-2">
           <input
@@ -471,6 +489,11 @@ const Dashboard = () => {
       <CoordinatesManagerModal
         isOpen={isCoordinateManagerModalOpen}
         onClose={closeCoordinateManagerModal}
+      />
+      <ImportModal isOpen={isImportModalOpen} onClose={closeImportModal} />
+      <ImportHistoryModal
+        isOpen={isImportHistoryModalOpen}
+        onClose={closeImportHistoryModal}
       />
     </div>
   );

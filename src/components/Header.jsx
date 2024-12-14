@@ -69,7 +69,7 @@ const Header = () => {
   return (
     <header className="flex justify-between items-center p-3 bg-black text-white">
       <div className="relative">
-        <h1 className="text-xl font-bold">Lab #1</h1>
+        <h1 className="text-xl font-bold">Lab #2</h1>
       </div>
       <div className="relative" ref={dropdownRef}>
         <button onClick={toggleDropdown} className="focus:outline-none">

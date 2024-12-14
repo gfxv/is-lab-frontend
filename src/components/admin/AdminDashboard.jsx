@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faX, faCheck, faCab } from "@fortawesome/free-solid-svg-icons";
+import { faX, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 import { useGlobalState } from "../../providers/GlobalStateContext";
 

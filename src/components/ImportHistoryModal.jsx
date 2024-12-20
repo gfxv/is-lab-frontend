@@ -8,22 +8,36 @@ const ImportHistoryModal = ({ isOpen, onClose }) => {
   const token = localStorage.getItem("token");
   const config = {
     headers: {
-      "Authorization": "Bearer " + token,
+      Authorization: "Bearer " + token,
       "Content-Type": "application/json",
     },
+  };
+
+  const downloadFile = (filename) => {
+    axios
+      .get(getBaseUrl() + `/import/download/${filename}`, {
+        responseType: "blob",
+      })
+      .then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        window.open(url, "_blank");
+      })
+      .catch((error) => {
+        console.error("Error downloading file:", error);
+      });
   };
 
   useEffect(() => {
     axios
       .get(getBaseUrl() + "/import/history", config)
       .then((response) => {
-        console.log(response)
+        console.log(response);
         setData(response.data);
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-  }, []);
+  }, [data]);
 
   if (!isOpen) return null;
 
@@ -46,6 +60,9 @@ const ImportHistoryModal = ({ isOpen, onClose }) => {
                 <th className="px-2 py-1 text-left text-sm font-medium text-gray-700">
                   Imported By
                 </th>
+                <th className="px-2 py-1 text-left text-sm font-medium text-gray-700">
+                  File
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -53,6 +70,7 @@ const ImportHistoryModal = ({ isOpen, onClose }) => {
                 <tr
                   key={item.id}
                   className={`hover:bg-gray-100 cursor-pointer transition-colors duration-200`}
+                  onClick={() => downloadFile(item.minioFilename)}
                 >
                   <td className="px-2 py-1 text-sm text-gray-600">{item.id}</td>
                   <td className="px-2 py-1 text-sm text-gray-600">
@@ -63,6 +81,9 @@ const ImportHistoryModal = ({ isOpen, onClose }) => {
                   </td>
                   <td className="px-2 py-1 text-sm text-gray-600">
                     {item.user.username}
+                  </td>
+                  <td className="px-2 py-1 text-sm text-gray-600">
+                    {item.minioFilename}
                   </td>
                 </tr>
               ))}
